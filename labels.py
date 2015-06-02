@@ -1,15 +1,16 @@
 import datetime
 import roman
 
+
 def get_closed_labels():
     return ["zakończone - sukces", "zakończone - wycofane", "zakończone - poprawione przed wykonaniem zgłoszenia",
-             "zakończone - duplikat", "zakończone - przeterminowane"]
+            "zakończone - duplikat", "zakończone - przeterminowane"]
 
 
 def get_inactive_labels():
     ended = get_closed_labels()
     recently_posted = ["nadane " + date_label(0), "nadane " + date_label(-1)]
-    progressing_without_prodding = ["do mnie - kontrapas", "do ZIKIT - kontrapas"]
+    progressing_without_prodding = ["kontrapas - do mnie", "kontrapas - do ZIKIT"]
     waits_for_fixing_stupid_law = ["przepisy - wąskie przejścia", "przepisy - ruch dwukierunkowy"]
     may_be_active = ["ma działać - ZIKIT - " + date_label(x) for x in range(0, 12)]
     supposed_to_be_fixed_this_year = ["ma działać - ZIKIT - " + str(datetime.datetime.now().year)]
@@ -23,6 +24,7 @@ def get_inactive_labels():
 
 def get_success_labels():
     return ["zakończone - sukces"]
+
 
 def get_activating_labels():
     return ["projekt 99 - do sprawdzenia"]

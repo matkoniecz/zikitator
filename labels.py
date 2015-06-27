@@ -27,7 +27,8 @@ def get_success_labels():
 
 
 def get_activating_labels():
-    return ["projekt 99 - do sprawdzenia"]
+    hibernating = ["hibernacja do " + date_label(x) for x in range(-100, -1)]
+    return ["projekt 99 - do sprawdzenia"] + hibernating + ["zakończone - do weryfikacji"]
 
 
 def get_labels_marking_unlocatable():

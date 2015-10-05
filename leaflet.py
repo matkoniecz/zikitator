@@ -1,3 +1,6 @@
+#in synch with leaflet.rb in bicycle map of krakow
+#TODO - create library to DRY
+
 def get_before(title):
     return """
 <!DOCTYPE html>
@@ -40,7 +43,21 @@ def get_after():
 """
 
 
+def get_location(lat, lon):
+    return "[" + str(lat) + ", " + str(lon) + "]"
+
 def get_marker(text, lat, lon):
-    location = "[" + str(lat) + ", " + str(lon) + "]"
+    location = get_location(lat, lon)
     return "L.marker(" + location + ").addTo(map).bindPopup(\"" + text + ".\");\n"
 
+def get_line(lat1, lon1, lat2, lon2, color='red'):
+    location1 = get_location(lat1, lon1)
+    location2 = get_location(lat2, lon2)
+    return "L.polyline([" + location1 + ", " + location2 + "]," + """
+		    {
+                color: '""" + color + """',
+                weight: 3,
+                opacity: .7,
+                lineJoin: 'round'
+            }
+            ).addTo(map);"""

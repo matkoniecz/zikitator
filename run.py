@@ -1,7 +1,6 @@
 import requests
 import requests_cache
-from labels import get_inactive_labels, get_closed_labels, get_activating_labels, get_labels_marking_unlocatable, \
-    get_success_labels
+import zikit_labels
 from leaflet import get_before, get_after, get_marker
 
 requests_cache.install_cache('demo_cache')
@@ -26,13 +25,20 @@ not_dead_markers = []
 succesful_markers = []
 
 def main():
-    download('matkoniecz/krakow')
-    write_markers_to_file('ZIKIT.html', active_markers, 'ZIKIT')
-    write_markers_to_file('ZIKIT-all.html', not_dead_markers, 'ZIKIT-all')
-    write_markers_to_file('ZIKIT-succesful.html', succesful_markers, 'ZIKIT :)')
+    process('matkoniecz/krakow', 'ZIKIT',
+        inactive=zikit_labels.get_inactive_labels(), 
+        closed=zikit_labels.get_closed_labels(), 
+        active=zikit_labels.get_activating_labels(), 
+        without_location=zikit_labels.get_labels_marking_unlocatable(),
+        success = zikit_labels.get_success_labels()
+    )
 
 
-def download(repo):
+def process(repo, main_name, inactive, closed, active, without_location, success):
+    active_markers.clear()
+    not_dead_markers.clear()
+    succesful_markers.clear()
+    print(repo)
     page = 1
     while True:
         issues_url = 'https://api.github.com/repos/{0}/issues'.format(repo)
@@ -51,22 +57,49 @@ def download(repo):
             break
 
         for issue in issues_json:
-            process_issue(issue)
+            process_issue(issue, inactive, closed, active, without_location, success)
         page += 1
+    name = main_name
+    write_markers_to_file(name+'.html', active_markers, name)
+    name = main_name + '-all'
+    write_markers_to_file(name+'.html', not_dead_markers, name)
+    name = main_name + '-succesful'
+    write_markers_to_file(name+'.html', succesful_markers, name)
 
+def complain_about_issue_with_missing_location(description, label_names):
+    print(description)
+    for label in label_names:
+        print("\t" + label)
+    print("\tWithout any given location!")
+    print("")
 
-def process_issue(issue):
-    inactivating_labels = get_inactive_labels()
-    closing_labels = get_closed_labels()
-    activating_labels = get_activating_labels()
-    unlocatable_labels = get_labels_marking_unlocatable()
-    success_labels = get_success_labels()
+def link_to_lat_lon(link):
+    # print("\t" + link)
+    lat = None
+    lon = None
+    for location in re.findall('\d+\.\d+', link):
+        if location is not None:
+            if lat is None:
+                lat = location
+            else:
+                lon = location
+                break
+    return lat, lon
+
+def get_text_of_comments(issue):
+    comments = ""
+    if issue['comments'] > 0:
+        comments_request = requests.get(issue['comments_url'], headers=standard_headers)
+        for comment in comments_request.json():
+            comments += comment['body']
+    return comments
+
+def process_issue(issue, inactivating_labels, closing_labels, activating_labels, without_location, success_labels):
     number = issue['number']
     title = issue['title']
     labels = issue['labels']
     body = issue['body']
 
-    # print(number, title)
     description = str(number) + " " + title
 
     active = True
@@ -84,30 +117,18 @@ def process_issue(issue):
             reactivated = True
         if label in success_labels:
             success = True
-        if label in unlocatable_labels:
+        if label in without_location:
             locatable = False
 
     if reactivated:
         not_dead = True
         active = True
 
-    if issue['comments'] > 0:
-        comments_request = requests.get(issue['comments_url'], headers=standard_headers)
-        for comment in comments_request.json():
-            body += comment['body']
+    body += get_text_of_comments(issue)
     links = re.findall('openstreetmap.org[^ \n\t]*', body)
     located = False
     for link in links:
-        # print("\t" + link)
-        lat = None
-        lon = None
-        for location in re.findall('\d+\.\d+', link):
-            if location is not None:
-                if lat is None:
-                    lat = location
-                else:
-                    lon = location
-                    break
+        lat, lon = link_to_lat_lon(link)
         if lon is not None:
             located = True
             # print("\t", lat, lon)
@@ -124,11 +145,7 @@ def process_issue(issue):
                 succesful_markers.insert(0, marker)
 
     if not located and (active or not_dead) and locatable:
-        print(description)
-        for label in label_names:
-            print("\t" + label)
-        print("\tWithout any given location!")
-        print("")
+        complain_about_issue_with_missing_location(description, label_names)
 
 
 def describe_issue(title, number, label_names):

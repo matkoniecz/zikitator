@@ -1,9 +1,10 @@
 import requests
 import requests_cache
 import zikit_labels
+import config
 from leaflet import get_before, get_after, get_marker
 
-requests_cache.install_cache('demo_cache')
+requests_cache.install_cache(config.get_cache_name())
 import json
 import os
 from os.path import join
@@ -33,7 +34,6 @@ def main():
         success = zikit_labels.get_success_labels()
     )
 
-
 def process(repo, main_name, inactive, closed, active, without_location, success):
     active_markers.clear()
     not_dead_markers.clear()
@@ -60,11 +60,12 @@ def process(repo, main_name, inactive, closed, active, without_location, success
             process_issue(issue, inactive, closed, active, without_location, success)
         page += 1
     name = main_name
-    write_markers_to_file(name+'.html', active_markers, name)
+    write_markers_to_data_file(name+'.data', active_markers, name)
+    write_markers_to_standalone_file(name+'.html', active_markers, name)
     name = main_name + '-all'
-    write_markers_to_file(name+'.html', not_dead_markers, name)
+    write_markers_to_standalone_file(name+'.html', not_dead_markers, name)
     name = main_name + '-succesful'
-    write_markers_to_file(name+'.html', succesful_markers, name)
+    write_markers_to_standalone_file(name+'.html', succesful_markers, name)
 
 def complain_about_issue_with_missing_location(description, label_names):
     print(description)
@@ -157,17 +158,24 @@ def describe_issue(title, number, label_names):
         text += label + "<br />"
     return text
 
+def write_markers_to_file(file, markers):
+    for marker in markers:
+        file.write(get_marker(marker.text, marker.lat, marker.lon))
 
-def write_markers_to_file(filename, markers, title):
+def write_markers_to_standalone_file(filename, markers, title):
     processed = open(filename, 'w')
     before = get_before(title)
     after = get_after()
 
     processed.write(before)
-    for marker in markers:
-        processed.write(get_marker(marker.text, marker.lat, marker.lon))
+    write_markers_to_file(processed, markers)
 
     processed.write(after)
+    processed.close()
+
+def write_markers_to_data_file(filename, markers, title):
+    processed = open(filename, 'w')
+    write_markers_to_file(processed, markers)
     processed.close()
 
 main()

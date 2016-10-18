@@ -26,6 +26,15 @@ not_dead_markers = []
 succesful_markers = []
 
 def main():
+    process('matkoniecz/bicycle_map_of_Krakow', 'OSM',
+        state='open',
+        inactive=["rendering"], 
+        closed=[], 
+        active=["missing OSM data", "missing OSM data - bicycle parking"], 
+        without_location=[],
+        success = []
+    )
+
     process('matkoniecz/krakow', 'ZIKIT',
         state='all',
         inactive=zikit_labels.get_inactive_labels(), 

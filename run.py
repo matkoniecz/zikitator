@@ -44,18 +44,7 @@ def process(repo, main_name, state, inactive, closed, active, without_location, 
     print(repo)
     page = 1
     while True:
-        issues_url = 'https://api.github.com/repos/{0}/issues'.format(repo)
-        r = requests.get(issues_url,
-                         params={'per_page': '100',
-                                 'page': str(page),
-                                 'state': state},
-                         headers=standard_headers)
-        if r.status_code != 200:
-            raise Exception("HTTP status {0} on fetching {1}".format(
-                r.status_code,
-                issues_url))
-
-        issues_json = r.json()
+        issues_json = fetch_issues(repo, page, state)
         if len(issues_json) == 0:
             break
 
@@ -69,6 +58,21 @@ def process(repo, main_name, state, inactive, closed, active, without_location, 
     write_markers_to_standalone_file(name+'.html', not_dead_markers, name)
     name = main_name + '-succesful'
     write_markers_to_standalone_file(name+'.html', succesful_markers, name)
+
+def fetch_issues(repo, page, issue_state):
+    issues_url = 'https://api.github.com/repos/{0}/issues'.format(repo)
+    r = requests.get(issues_url,
+                     params={'per_page': '100',
+                             'page': str(page),
+                             'state': issue_state},
+                     headers=standard_headers)
+    if r.status_code != 200:
+        raise Exception("HTTP status {0} on fetching {1}".format(
+            r.status_code,
+            issues_url))
+
+    issues_json = r.json()
+    return issues_json
 
 def complain_about_issue_with_missing_location(description, label_names):
     print(description)

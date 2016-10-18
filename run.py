@@ -60,7 +60,7 @@ def process(repo, main_name, state, inactive, closed, active, without_location, 
             break
 
         for issue in issues_json:
-            process_issue(issue, inactive, closed, active, without_location, success)
+            process_issue(repo, issue, inactive, closed, active, without_location, success)
         page += 1
     name = main_name
     write_markers_to_data_file(name+'.data', active_markers, name)
@@ -98,7 +98,7 @@ def get_text_of_comments(issue):
             comments += comment['body']
     return comments
 
-def process_issue(issue, inactivating_labels, closing_labels, activating_labels, without_location, success_labels):
+def process_issue(repo, issue, inactivating_labels, closing_labels, activating_labels, without_location, success_labels):
     number = issue['number']
     title = issue['title']
     labels = issue['labels']
@@ -137,7 +137,7 @@ def process_issue(issue, inactivating_labels, closing_labels, activating_labels,
             located = True
             # print("\t", lat, lon)
             marker = Marker()
-            marker.text = describe_issue(title, number, label_names)
+            marker.text = describe_issue(repo, title, number, label_names)
             marker.lat = lat
             marker.lon = lon
 
@@ -152,9 +152,9 @@ def process_issue(issue, inactivating_labels, closing_labels, activating_labels,
         complain_about_issue_with_missing_location(description, label_names)
 
 
-def describe_issue(title, number, label_names):
+def describe_issue(repo, title, number, label_names):
     text = title.replace("\"", "\\\"")
-    link = "https://github.com/matkoniecz/Krakow/issues/" + str(number)
+    link = "https://github.com/" + repo + "/issues/" + str(number)
     text += " <a href=" + link + ">#" + str(number) + "</a>"
     text += "<br />"
     for label in label_names:

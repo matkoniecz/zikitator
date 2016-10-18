@@ -27,6 +27,7 @@ succesful_markers = []
 
 def main():
     process('matkoniecz/krakow', 'ZIKIT',
+        state='all',
         inactive=zikit_labels.get_inactive_labels(), 
         closed=zikit_labels.get_closed_labels(), 
         active=zikit_labels.get_activating_labels(), 
@@ -34,7 +35,9 @@ def main():
         success = zikit_labels.get_success_labels()
     )
 
-def process(repo, main_name, inactive, closed, active, without_location, success):
+
+
+def process(repo, main_name, state, inactive, closed, active, without_location, success):
     active_markers.clear()
     not_dead_markers.clear()
     succesful_markers.clear()
@@ -45,7 +48,7 @@ def process(repo, main_name, inactive, closed, active, without_location, success
         r = requests.get(issues_url,
                          params={'per_page': '100',
                                  'page': str(page),
-                                 'state': 'all'},
+                                 'state': state},
                          headers=standard_headers)
         if r.status_code != 200:
             raise Exception("HTTP status {0} on fetching {1}".format(

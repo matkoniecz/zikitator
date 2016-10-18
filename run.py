@@ -62,6 +62,7 @@ def process(repo, main_name, state, inactive, closed, active, without_location, 
         page += 1
     name = main_name
     write_markers_to_data_file(name+'.data', active_markers, name)
+    print(str(len(active_markers))+ " active markers from Github ("+repo+")")
     write_markers_to_standalone_file(name+'.html', active_markers, name)
     name = main_name + '-all'
     write_markers_to_standalone_file(name+'.html', not_dead_markers, name)

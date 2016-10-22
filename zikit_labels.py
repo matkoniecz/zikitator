@@ -14,7 +14,7 @@ def get_inactive_labels():
     waits_for_fixing_stupid_law = ["przepisy - wąskie przejścia", "przepisy - ruch dwukierunkowy"]
     may_be_active = ["ma działać - " + date_label(x) for x in range(0, 12)]
     supposed_to_be_fixed_this_year = ["ma działać - " + str(datetime.datetime.now().year)]
-    hibernated = ["hibernacja do " + date_label(x) for x in range(1, 24)]
+    hibernated = ["hibernacja do " + date_label(x) for x in range(1, 12*5)]
     inspection_unnecessary = ["do Rady Miasta", "do ZIKIT", "do ZIKIT - kontrapas", "do SM", "do KMR/prasy",
                               "do dzielnicy", "do innych", "do zielone na poziomie", "do mnie - budżet obywatelski",
                               "brak kasy - łączniki"]

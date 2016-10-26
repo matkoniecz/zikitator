@@ -12,7 +12,7 @@ def get_inactive_labels():
     recently_posted = ["nadane - " + date_label(0), "nadane - " + date_label(-1)]
     progressing_without_prodding = ["kontrapas - do mnie", "kontrapas - do ZIKIT"]
     waits_for_fixing_stupid_law = ["przepisy - wąskie przejścia", "przepisy - ruch dwukierunkowy"]
-    may_be_active = ["ma działać - " + date_label(x) for x in range(0, 12)]
+    may_be_active = ["ma działać - " + date_label(x) for x in range(0, 12)] + ["ma działać - " + date_label_year_only(x) for x in range(0, 5)]
     supposed_to_be_fixed_this_year = ["ma działać - " + str(datetime.datetime.now().year)]
     hibernated = ["hibernacja do " + date_label(x) for x in range(1, 12*5)]
     inspection_unnecessary = ["do Rady Miasta", "do ZIKIT", "do ZIKIT - kontrapas", "do SM", "do KMR/prasy",
@@ -47,3 +47,7 @@ def date_label(date_delta_in_months):
         year -= 1
         month += 12
     return str(year) + " " + roman.toRoman(month)
+
+def date_label_year_only(date_delta_in_years):
+    now = datetime.datetime.now()
+    return str(now.year + date_delta_in_years)

@@ -118,7 +118,7 @@ def process_issue(repo, issue, inactivating_labels, closing_labels, activating_l
     labels = issue['labels']
     body = issue['body']
 
-    description = str(number) + " " + title
+    description = str(number) + " " + title + " \n" + github_link(repo, number)
 
     active = True
     not_dead = True
@@ -165,10 +165,12 @@ def process_issue(repo, issue, inactivating_labels, closing_labels, activating_l
     if not located and (active or not_dead) and locatable:
         complain_about_issue_with_missing_location(description, label_names)
 
+def github_link(repo, number):
+    return "https://github.com/" + repo + "/issues/" + str(number)
 
 def describe_issue(repo, title, number, label_names):
     text = title.replace("\"", "\\\"")
-    link = "https://github.com/" + repo + "/issues/" + str(number)
+    link = github_link(repo, number)
     text += " <a href=" + link + ">#" + str(number) + "</a>"
     text += "<br />"
     for label in label_names:

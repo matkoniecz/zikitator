@@ -17,7 +17,7 @@ def get_inactive_labels():
     hibernated = ["hibernacja do " + date_label(x) for x in range(1, 12*5)]
     inspection_unnecessary = ["do Rady Miasta", "do ZIKIT", "do ZIKIT - kontrapas", "do SM", "do KMR/prasy",
                               "do dzielnicy", "do innych", "do zielone na poziomie", "do mnie - budżet obywatelski",
-                              "brak kasy - łączniki"]
+                              "do ZIKIT - sekcja rowerowa", "brak kasy - łączniki"]
 
     return ended + recently_posted + progressing_without_prodding + waits_for_fixing_stupid_law + \
            supposed_to_be_fixed_this_year + hibernated + may_be_active + inspection_unnecessary

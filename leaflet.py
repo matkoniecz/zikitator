@@ -9,7 +9,7 @@ def get_before(title):
 	<title>""" + title + """</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.7/leaflet.css" />
     <style>
         body {
             padding: 0;
@@ -24,7 +24,7 @@ def get_before(title):
 <body>
 	<div id="map"></div>
 
-	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.7/leaflet.js"></script>
 	<script>
 		var map = L.map('map').setView([50.07, 19.92], 13);
 		mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';

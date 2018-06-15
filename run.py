@@ -10,7 +10,7 @@ import os
 from os.path import join
 import re
 
-with open(join(os.environ['HOME'], '.github-oauth-read-token.json')) as f:  # TODO - create this file
+with open(join(os.environ['HOME'], '.github-oauth-read-token-for-zikitator.json')) as f:
     token = json.load(f)['token']
 
 standard_headers = {'User-Agent': 'github-zikitator/0.0',

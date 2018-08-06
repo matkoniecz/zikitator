@@ -10,6 +10,7 @@ def get_closed_labels():
 def get_inactive_labels():
     ended = get_closed_labels()
     recently_posted = ["nadane - " + date_label(0), "nadane - " + date_label(-1), "nadane - " + date_label(-2)]
+    recently_posted = ["nadane " + date_label(0), "nadane " + date_label(-1), "nadane " + date_label(-2)]
     progressing_without_prodding = ["kontrapas - do mnie", "kontrapas - do ZIKIT"]
     waits_for_fixing_stupid_law = ["przepisy - wąskie przejścia", "przepisy - ruch dwukierunkowy"]
     may_be_active = ["ma działać - " + date_label(x) for x in range(0, 12)] + ["ma działać - " + date_label_year_only(x) for x in range(0, 5)]

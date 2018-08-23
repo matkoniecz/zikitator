@@ -25,7 +25,7 @@ def get_inactive_labels():
 
 
 def get_success_labels():
-    return ["zakończone - sukces"]
+    return ["zakończone - sukces", "zakończone - sukces - informacja uzyskana"]
 
 
 def get_activating_labels():

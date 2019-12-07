@@ -4,7 +4,7 @@ import roman
 
 def get_closed_labels():
     return ["zakończone - wycofane", "zakończone - poprawione przed wykonaniem zgłoszenia",
-            "zakończone - duplikat", "zakończone - przeterminowane", "zakończone - sukces - informacja uzyskana"
+            "zakończone - duplikat", "zakończone - przeterminowane", "zakończone - sukces - informacja uzyskana",
             "zakończone - podziękowania"] + get_success_labels()
 
 

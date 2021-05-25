@@ -5,13 +5,11 @@ import config
 from leaflet import get_before, get_after, get_marker
 
 requests_cache.install_cache(config.get_cache_name())
-import json
-import os
-from os.path import join
 import re
+import json
 
-with open(join(os.environ['HOME'], '.github-oauth-read-token-for-zikitator.json')) as f:
-    token = json.load(f)['token']
+with open(config.get_token_location()) as f:
+    token = f.read()
 
 standard_headers = {'User-Agent': 'github-zikitator/0.0',
                     'Authorization': 'bearer {0}'.format(token)}

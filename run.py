@@ -56,6 +56,7 @@ def process(repo, main_name, state, inactive, closed, active, without_location, 
             break
 
         for issue in issues_json:
+            #print(issue)
             process_issue(repo, issue, inactive, closed, active, without_location, success)
         page += 1
     name = main_name
@@ -111,6 +112,19 @@ def get_text_of_comments(issue):
     return comments
 
 def process_issue(repo, issue, inactivating_labels, closing_labels, activating_labels, without_location, success_labels):
+    """
+    issues_url = 'https://api.github.com/rate_limit'
+    r = requests.get(issues_url,
+                     headers=standard_headers)
+    print()
+    print()
+    print()
+    print(r.json())
+    print()
+    print()
+    print()
+    """
+
     number = issue['number']
     title = issue['title']
     labels = issue['labels']

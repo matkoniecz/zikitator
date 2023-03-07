@@ -15,7 +15,7 @@ with open(config.get_token_location()) as f:
 with open(config.get_location_of_file_with_ccordinates()) as f:
     my_real_world_location = json.load(f)
 
-standard_headers = {'User-Agent': 'github-zikitator/0.0',
+standard_headers = {'User-Agent': 'getting_issues_from_github_about_local_government/0.0',
                     'Authorization': 'bearer {0}'.format(token)}
 
 

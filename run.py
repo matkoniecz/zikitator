@@ -2,6 +2,7 @@ import requests
 import requests_cache
 import zikit_labels
 import config
+import random
 from leaflet import get_before, get_after, get_marker
 
 requests_cache.install_cache(config.get_cache_name())
@@ -10,6 +11,9 @@ import json
 
 with open(config.get_token_location()) as f:
     token = f.read()
+
+with open(config.get_location_of_file_with_ccordinates()) as f:
+    my_real_world_location = json.load(f)
 
 standard_headers = {'User-Agent': 'github-zikitator/0.0',
                     'Authorization': 'bearer {0}'.format(token)}
@@ -162,26 +166,30 @@ def process_issue(repo, issue, inactivating_labels, closing_labels, activating_l
 
     body += get_text_of_comments(issue)
     links = re.findall('openstreetmap.org[^ \n\t]*', body)
-    located = False
+    located = None
     for link in links:
         lat, lon = link_to_lat_lon(link)
         if lon is not None:
-            located = True
-            # print("\t", lat, lon)
-            marker = Marker()
-            marker.text = describe_issue(repo, title, number, label_names)
-            marker.lat = lat
-            marker.lon = lon
-
-            if active:
-                active_markers.insert(0, marker)
-            if not_dead:
-                not_dead_markers.insert(0, marker)
-            if success:
-                succesful_markers.insert(0, marker)
-
+            located = {'lat': lat, 'lon': lon}
     if not located and (active or not_dead) and locatable:
         complain_about_issue_with_missing_location(description, label_names)
+    if not located:
+        located = my_real_world_location
+        located['lat'] += 0.0004*random.random() - 0.0002
+        located['lon'] += 0.0004*random.random() - 0.0002
+
+    marker = Marker()
+    marker.text = describe_issue(repo, title, number, label_names)
+    marker.lat = located['lat']
+    marker.lon = located['lon']
+
+    if active:
+        active_markers.insert(0, marker)
+    if not_dead:
+        not_dead_markers.insert(0, marker)
+    if success:
+        succesful_markers.insert(0, marker)
+
 
 def github_link(repo, number):
     return "https://github.com/" + repo + "/issues/" + str(number)

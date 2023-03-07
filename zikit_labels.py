@@ -6,7 +6,7 @@ def get_closed_labels():
     return ["zakończone - wycofane", "zakończone - poprawione przed wykonaniem zgłoszenia",
     		"zakończone - poprawione przed moim zgłoszeniem",
             "zakończone - duplikat", "zakończone - przeterminowane", "zakończone - sukces - informacja uzyskana",
-            "zakończone - podziękowania"] + get_success_labels()
+            "zakończone - podziękowania", "zakończone - reorganizacja"] + get_success_labels()
 
 
 def get_inactive_labels():
@@ -18,16 +18,14 @@ def get_inactive_labels():
     may_be_active = ["ma działać - " + date_label(x) for x in range(0, 12)] + ["ma działać - " + date_label_year_only(x) for x in range(0, 5)]
     supposed_to_be_fixed_this_year = ["ma działać - " + str(datetime.datetime.now().year)]
     hibernated = ["hibernacja do " + date_label(x) for x in range(1, 12 * 20)]
-    inspection_unnecessary = ["do Rady Miasta", "do ZIKIT", "do ZIKIT - kontrapas", "do SM", "do KMR/prasy",
-                              "do dzielnicy", "do innych", "do zielone na poziomie", "do mnie - budżet obywatelski",
-                              "do ZIKIT - sekcja rowerowa", "brak kasy - łączniki"]
+    inspection_unnecessary = ["do ZIKIT - kontrapas"]
 
     return ended + recently_posted + progressing_without_prodding + waits_for_fixing_stupid_law + \
            supposed_to_be_fixed_this_year + hibernated + may_be_active + inspection_unnecessary
 
 
 def get_success_labels():
-    return ["zakończone - sukces"]
+    return ["zakończone - sukces", "zakończone - zrobiłem"]
 
 
 def get_activating_labels():

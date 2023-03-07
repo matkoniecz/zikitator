@@ -84,11 +84,15 @@ def fetch_issues(repo, page, issue_state):
     return issues_json
 
 def complain_about_issue_with_missing_location(description, label_names):
-    print(description)
+    message = ""
+    message += description + "\n"
     for label in label_names:
-        print("\t" + label)
-    print("\tWithout any given location!")
-    print("")
+        message += "\t" + label + "\n"
+    message += "\tWithout any given location!\n"
+    message += "\n"
+    print(message)
+    with open("issues_without_specified_location.txt", "a") as myfile:
+        myfile.write(message)
 
 def link_to_lat_lon(link):
     # print("\t" + link)

@@ -133,6 +133,8 @@ def process_issue(repo, issue, inactivating_labels, closing_labels, activating_l
     title = issue['title']
     labels = issue['labels']
     body = issue['body']
+    if body == None:
+        body = "" # https://github.com/matkoniecz/Krakow/issues/494
 
     description = str(number) + " " + title + " \n" + github_link(repo, number)
 

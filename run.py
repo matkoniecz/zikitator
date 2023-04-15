@@ -8,6 +8,7 @@ from leaflet import get_before, get_after, get_marker
 requests_cache.install_cache(config.get_cache_name())
 import re
 import json
+import time
 
 with open(config.get_token_location()) as f:
     token = f.read()
@@ -114,10 +115,20 @@ def link_to_lat_lon(link):
 def get_text_of_comments(issue):
     comments = ""
     if issue['comments'] > 0:
-        comments_request = requests.get(issue['comments_url'], headers=standard_headers)
+        comments_request = run_request_retry_as_needed(issue['comments_url'], headers=standard_headers)
         for comment in comments_request.json():
             comments += comment['body']
     return comments
+
+def run_request_retry_as_needed(url, headers):
+    while True:
+        try:
+            return requests.get(url, headers=headers)
+        except requests.exceptions.ConnectionError as e:
+            print(e)
+            print("retry, sleeping")
+            time.sleep(60)
+            print("retry, sleeping ended")
 
 def process_issue(repo, issue, inactivating_labels, closing_labels, activating_labels, without_location, success_labels):
     """

@@ -2,6 +2,7 @@
 *.kml
 *.data
 *.sqlite
+issues_without_specified_location.txt
 
 # Created by .ignore support plugin (hsz.mobi)
 ### Linux template

@@ -25,6 +25,7 @@ class Marker:
 
 
 active_markers = []
+active_markers_for_survey = []
 not_dead_markers = []
 succesful_markers = []
 
@@ -51,6 +52,7 @@ def main():
 
 def process(repo, main_name, state, inactive, closed, active, without_location, success):
     active_markers.clear()
+    active_markers_for_survey.clear()
     not_dead_markers.clear()
     succesful_markers.clear()
     print(repo)
@@ -66,12 +68,12 @@ def process(repo, main_name, state, inactive, closed, active, without_location, 
         page += 1
     name = main_name
     write_markers_to_data_file(name+'.data', active_markers, name)
+    write_markers_to_data_file(name+'-only-with-survey-needed.data', active_markers_for_survey, name)
     print(str(len(active_markers))+ " active markers from Github ("+repo+")")
-    write_markers_to_standalone_file(name+'.html', active_markers, name)
-    name = main_name + '-all'
-    write_markers_to_standalone_file(name+'.html', not_dead_markers, name)
-    name = main_name + '-succesful'
-    write_markers_to_standalone_file(name+'.html', succesful_markers, name)
+    write_markers_to_standalone_files(active_markers, main_name)
+    write_markers_to_standalone_files(active_markers_for_survey, main_name + '-only-with-survey-needed')
+    write_markers_to_standalone_files(not_dead_markers, main_name + '-all')
+    write_markers_to_standalone_files(succesful_markers, main_name + '-succesful')
 
 def fetch_issues(repo, page, issue_state):
     issues_url = 'https://api.github.com/repos/{0}/issues'.format(repo)
@@ -190,12 +192,15 @@ def process_issue(repo, issue, inactivating_labels, closing_labels, activating_l
         located['lon'] += 0.0004*random.random() - 0.0002
 
     marker = Marker()
-    marker.text = describe_issue(repo, title, number, label_names)
+    marker.text = describe_issue_html(repo, title, number, label_names)
+    marker.bare_text = describe_issue_text(repo, title, number, label_names)
     marker.lat = located['lat']
     marker.lon = located['lon']
 
     if active:
         active_markers.insert(0, marker)
+        if locatable:
+            active_markers_for_survey.insert(0, marker)
     if not_dead:
         not_dead_markers.insert(0, marker)
     if success:
@@ -205,7 +210,7 @@ def process_issue(repo, issue, inactivating_labels, closing_labels, activating_l
 def github_link(repo, number):
     return "https://github.com/" + repo + "/issues/" + str(number)
 
-def describe_issue(repo, title, number, label_names):
+def describe_issue_html(repo, title, number, label_names):
     text = title.replace("\"", "\\\"")
     link = github_link(repo, number)
     text += " <a href=" + link + ">#" + str(number) + "</a>"
@@ -214,20 +219,58 @@ def describe_issue(repo, title, number, label_names):
         text += label + "<br />"
     return text
 
+def describe_issue_text(repo, title, number, label_names):
+    text = title.replace("\"", "\\\"")
+    text += "\n#" + str(number)
+    if repo != "matkoniecz/krakow":
+        text += "(" + repo + ")"
+    text += "\n"
+    for label in label_names:
+        text += label + "\n"
+    return text
+
 def write_markers_to_file(file, markers):
     for marker in markers:
         file.write(get_marker(marker.text, marker.lat, marker.lon))
 
-def write_markers_to_standalone_file(filename, markers, title):
-    processed = open(filename, 'w')
+def write_markers_to_standalone_files(markers, title):
+    write_to_html_file(markers, title)
+    write_to_kml_file(markers, title)
+
+def write_to_html_file(markers, title):
+    filename =  title + ".html"
+    file = open(filename, 'w')
     before = get_before(title)
     after = get_after()
 
-    processed.write(before)
-    write_markers_to_file(processed, markers)
+    file.write(before)
+    write_markers_to_file(file, markers)
 
-    processed.write(after)
-    processed.close()
+    file.write(after)
+    file.close()
+
+def write_to_kml_file(markers, title):
+    filename =  title + ".kml"
+    file = open(filename, 'w')
+    before = """<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>ZIKIT</name>
+  <visibility>1</visibility>"""
+    after = """</Document>
+</kml>"""
+
+    file.write(before)
+    for marker in markers:
+        file.write(get_kml_marker(marker.bare_text, marker.lat, marker.lon))
+
+    file.write(after)
+    file.close()
+
+def get_kml_marker(text, lat, lon):
+    color = "brown"
+    return "  <Placemark>\n     <name><![CDATA[\n" + text + "\n]]></name>\n    <styleUrl>#placemark-" + color + """</styleUrl>
+    <Point><coordinates>""" + str(lon) + ',' + str(lat) + '</coordinates></Point>\n</Placemark>'
 
 def write_markers_to_data_file(filename, markers, title):
     processed = open(filename, 'w')

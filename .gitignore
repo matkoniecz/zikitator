@@ -1,4 +1,5 @@
 *.html
+*.kml
 *.data
 *.sqlite
 

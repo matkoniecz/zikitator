@@ -1,4 +1,8 @@
 import os
 import config
 
-os.remove(config.get_cache_location()) 
+if os.path.isdir(config.get_cache_location()):
+    raise Exception("expected file")
+
+if os.path.isfile(config.get_cache_location()):
+    os.remove(config.get_cache_location())
